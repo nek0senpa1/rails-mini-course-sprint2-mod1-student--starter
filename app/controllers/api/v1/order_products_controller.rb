@@ -1,3 +1,6 @@
+module Api
+  module V1
+
 class OrderProductsController < ApplicationController
   before_action :set_order_product, only: [:show, :update, :destroy]
 
@@ -48,4 +51,7 @@ class OrderProductsController < ApplicationController
     def order_product_params
       params.require(:order_product).permit(:order_id, :product_id)
     end
+end
+
+end
 end

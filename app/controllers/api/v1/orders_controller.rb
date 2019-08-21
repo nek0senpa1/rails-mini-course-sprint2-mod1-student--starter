@@ -1,41 +1,51 @@
+module Api
+  module V1
+
+
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update, :destroy]
 
   # GET /orders
   def index
-    @orders = Order.all
+    # @orders = Order.all
+
+    if params[:customer_id].present?
+      @orders = Order.where(customer_id: params[:customer_id])
+    else
+      @orders = Order.all        
+    end
 
     render json: @orders
+
   end
 
   # GET /orders/1
   def show
+    @order = Order.find(params[:id])
+
     render json: @order
   end
 
   # POST /orders
   def create
-    @order = Order.new(order_params)
+    @order= Order.new(customer_id: order_params[:customer_id])
+    @order[:status] = "pending"
 
     if @order.save
-      render json: @order, status: :created, location: @order
-    else
-      render json: @order.errors, status: :unprocessable_entity
-    end
-  end
-
-  # PATCH/PUT /orders/1
-  def update
-    if @order.update(order_params)
       render json: @order
     else
-      render json: @order.errors, status: :unprocessable_entity
+      render json: @order.errors
     end
   end
 
-  # DELETE /orders/1
-  def destroy
-    @order.destroy
+  
+
+  def ship
+    @order = Order.find(params[:id])
+    puts @order
+    @order[:status] = "shipped"
+
+    render json: @order
   end
 
   private
@@ -48,4 +58,8 @@ class OrdersController < ApplicationController
     def order_params
       params.require(:order).permit(:status, :customer_id)
     end
+end
+
+
+end
 end
